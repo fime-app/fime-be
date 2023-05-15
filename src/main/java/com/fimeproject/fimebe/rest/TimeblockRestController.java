@@ -2,6 +2,7 @@ package com.fimeproject.fimebe.rest;
 
 import com.fimeproject.fimebe.dao.TimeblockDAO;
 import com.fimeproject.fimebe.entity.Timeblock;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class TimeblockRestController {
     }
 
     // expose "/timeblocks" and return a list of all timeblocks
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/timeblocks")
     public List<Timeblock> findAll() {
         return timeblockDAO.findAll();
