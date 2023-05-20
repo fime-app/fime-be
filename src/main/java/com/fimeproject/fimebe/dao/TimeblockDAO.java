@@ -5,9 +5,11 @@ import com.fimeproject.fimebe.entity.Timeblock;
 import java.util.List;
 
 public interface TimeblockDAO {
-    void save(Timeblock timeblock);
+    Timeblock save(Timeblock timeblock);
 
-    Timeblock findById(Integer id);
+    List<Timeblock> findByName(String name);
 
     List<Timeblock> findAll();
+
+    void deleteById(int theId);
 }

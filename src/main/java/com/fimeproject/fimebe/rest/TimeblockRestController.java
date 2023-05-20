@@ -1,29 +1,41 @@
 package com.fimeproject.fimebe.rest;
 
-import com.fimeproject.fimebe.dao.TimeblockDAO;
 import com.fimeproject.fimebe.entity.Timeblock;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.fimeproject.fimebe.service.TimeblockService;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
 public class TimeblockRestController {
     // inject employee DAO directly
+    private TimeblockService timeblockService;
 
-    private TimeblockDAO timeblockDAO;
-
-    public TimeblockRestController(TimeblockDAO theTimeblockDAO) {
-        timeblockDAO = theTimeblockDAO;
+    public TimeblockRestController(TimeblockService theTimeblockService) {
+        timeblockService = theTimeblockService;
     }
 
     // expose "/timeblocks" and return a list of all timeblocks
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/timeblocks")
     public List<Timeblock> findAll() {
-        return timeblockDAO.findAll();
+        return timeblockService.findAll();
     }
+
+    // add mapping for GET /timeblock/{name}
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/timeblocks/{name}")
+    public List<Timeblock> getTimeblocks(@PathVariable String name) {
+        List<Timeblock> timeblocks = timeblockService.findByName(name);
+
+        if (timeblocks == null) {
+            throw new RuntimeException("Name not found - " + name);
+        }
+
+        return timeblocks;
+    }
+
+
 }
