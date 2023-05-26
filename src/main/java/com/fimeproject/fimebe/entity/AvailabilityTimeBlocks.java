@@ -5,29 +5,28 @@ import jakarta.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table(name="timeblocks")
-public class Timeblock {
+@Table(name="availability_timeblocks")
+public class AvailabilityTimeBlocks {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
 
-    @Column(name="start_date")
+    @Column(name = "start_date")
     private Date startDate;
 
-    @Column(name="end_date")
+    @Column(name = "end_date")
     private Date endDate;
 
+    @Column(name = "availability_id")
+    private int availabilityId;
 
-    @Column(name="name")
-    private String name;
+    public AvailabilityTimeBlocks() {}
 
-    public Timeblock() {}
-
-    public Timeblock(Date startDate, Date endDate, String name) {
+    public AvailabilityTimeBlocks(Date startDate, Date endDate, int availabilityId) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.name = name;
+        this.availabilityId = availabilityId;
     }
 
     public Date getStartDate() {
@@ -46,21 +45,21 @@ public class Timeblock {
         this.endDate = endDate;
     }
 
-    public String getName() {
-        return name;
+    public int getAvailabilityId() {
+        return availabilityId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAvailabilityId(int availabilityId) {
+        this.availabilityId = availabilityId;
     }
 
     @Override
     public String toString() {
-        return "Timeblock{" +
+        return "AvailabilityTimeBlocks{" +
                 "id=" + id +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", name='" + name + '\'' +
+                ", availabilityId=" + availabilityId +
                 '}';
     }
 }

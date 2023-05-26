@@ -5,29 +5,28 @@ import jakarta.persistence.*;
 import java.sql.Date;
 
 @Entity
-@Table(name="timeblocks")
-public class Timeblock {
+@Table(name="events_timeblocks")
+public class EventTimeBlocks {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
 
-    @Column(name="start_date")
+    @Column(name = "start_date")
     private Date startDate;
 
-    @Column(name="end_date")
+    @Column(name = "end_date")
     private Date endDate;
 
+    @Column(name = "event_id")
+    private int eventId;
 
-    @Column(name="name")
-    private String name;
+    public EventTimeBlocks() {}
 
-    public Timeblock() {}
-
-    public Timeblock(Date startDate, Date endDate, String name) {
+    public EventTimeBlocks(Date startDate, Date endDate, int eventId) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.name = name;
+        this.eventId = eventId;
     }
 
     public Date getStartDate() {
@@ -46,21 +45,21 @@ public class Timeblock {
         this.endDate = endDate;
     }
 
-    public String getName() {
-        return name;
+    public int getEventId() {
+        return eventId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
     }
 
     @Override
     public String toString() {
-        return "Timeblock{" +
+        return "EventTimeBlocks{" +
                 "id=" + id +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", name='" + name + '\'' +
+                ", eventId=" + eventId +
                 '}';
     }
 }
