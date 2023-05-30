@@ -2,6 +2,7 @@ package com.fimeproject.fimebe.dao;
 
 import com.fimeproject.fimebe.entity.Events;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -23,5 +24,12 @@ public class EventsDAOImpl implements EventsDAO{
         TypedQuery<Events> theQuery = entityManager.createQuery("FROM Events", Events.class);
 
         return theQuery.getResultList();
+    }
+
+    @Override
+    public List<Events> findById(int id) {
+        Query query = entityManager.createQuery("select e FROM Events e " + "WHERE id=:id").setParameter("id", id);
+
+        return query.getResultList();
     }
 }

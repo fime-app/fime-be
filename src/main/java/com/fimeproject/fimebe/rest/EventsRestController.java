@@ -2,10 +2,7 @@ package com.fimeproject.fimebe.rest;
 
 import com.fimeproject.fimebe.entity.Events;
 import com.fimeproject.fimebe.service.EventsService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,6 +16,11 @@ public class EventsRestController {
         eventsService = theEventsService;
     }
 
-    @GetMapping("/events")
+    @GetMapping("/all-events")
     public List<Events> findAll() {return eventsService.findAll();}
+
+    @GetMapping("/event/{id}")
+    public List<Events> findAllAvailableDatesGivenEvent(@PathVariable int id) {
+        return eventsService.findAllAvailableDatesGivenEvent(id);
+    }
 }

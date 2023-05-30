@@ -6,7 +6,7 @@ import java.sql.Date;
 
 @Entity
 @Table(name="events_timeblocks")
-public class EventTimeBlocks {
+public class EventsTimeBlock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -21,9 +21,9 @@ public class EventTimeBlocks {
     @Column(name = "event_id")
     private int eventId;
 
-    public EventTimeBlocks() {}
+    public EventsTimeBlock() {}
 
-    public EventTimeBlocks(Date startDate, Date endDate, int eventId) {
+    public EventsTimeBlock(Date startDate, Date endDate, int eventId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.eventId = eventId;

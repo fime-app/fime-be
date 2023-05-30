@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface EventsService {
     List<Events> findAll();
+
+    List<Events> findAllAvailableDatesGivenEvent(int id);
 }
