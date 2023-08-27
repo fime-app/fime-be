@@ -21,14 +21,14 @@ public class EventsTimeBlockDAOImpl implements EventsTimeBlockDAO{
 
     @Override
     public List<EventsTimeBlock> findAll() {
-        TypedQuery<EventsTimeBlock> theQuery = entityManager.createQuery("FROM EventsTimeBlocks", EventsTimeBlock.class);
+        TypedQuery<EventsTimeBlock> theQuery = entityManager.createQuery("FROM EventsTimeBlock", EventsTimeBlock.class);
 
         return theQuery.getResultList();
     }
 
     @Override
     public List<EventsTimeBlock> findById(int id) {
-        Query query = entityManager.createQuery("FROM EventsTimeBlocks etb " + "where etb.eventId=:id").setParameter("id", id);
+        Query query = entityManager.createQuery("FROM EventsTimeBlock etb " + "where etb.eventId=:id").setParameter("id", id);
 
         return query.getResultList();
     }
