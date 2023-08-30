@@ -4,6 +4,7 @@ import com.fimeproject.fimebe.entity.EventsTimeBlock;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +35,7 @@ public class EventsTimeBlockDAOImpl implements EventsTimeBlockDAO{
     }
 
     @Override
+    @Transactional
     public EventsTimeBlock save(EventsTimeBlock eventsTimeBlock) {
         EventsTimeBlock dbEventsTimeBlock = entityManager.merge(eventsTimeBlock);
 

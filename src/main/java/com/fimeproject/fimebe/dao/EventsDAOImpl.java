@@ -4,6 +4,7 @@ import com.fimeproject.fimebe.entity.Events;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,5 +32,11 @@ public class EventsDAOImpl implements EventsDAO{
         Query query = entityManager.createQuery("select e FROM Events e " + "WHERE id=:id").setParameter("id", id);
 
         return query.getResultList();
+    }
+
+    @Override
+    @Transactional
+    public Events save(Events event) {
+        return entityManager.merge(event);
     }
 }

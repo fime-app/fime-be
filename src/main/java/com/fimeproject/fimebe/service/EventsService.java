@@ -8,4 +8,6 @@ public interface EventsService {
     List<Events> findAll();
 
     List<Events> findAllAvailableDatesGivenEvent(int id);
+
+    Events createEvent(Events event); 
 }

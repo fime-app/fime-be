@@ -25,7 +25,7 @@ public class EventsTimeBlockServiceImpl implements EventsTimeBlockService{
     }
 
     @Override
-    public EventsTimeBlock save(EventsTimeBlock theEventsTimeBlock) {
+    public EventsTimeBlock createTimeBlock(EventsTimeBlock theEventsTimeBlock) {
         return this.eventsTimeBlockDAO.save(theEventsTimeBlock);
     }
 }

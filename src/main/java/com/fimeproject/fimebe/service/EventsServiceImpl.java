@@ -28,5 +28,9 @@ public class EventsServiceImpl implements EventsService{
         return eventsDAO.findById(id);
     }
 
+    @Override
+    public Events createEvent(Events event) {
+        return eventsDAO.save(event);
+    }
 
 }

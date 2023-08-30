@@ -9,4 +9,6 @@ public interface EventsDAO {
 
     List<Events> findById(int id);
 
+    Events save(Events event);
+
 }
