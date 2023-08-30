@@ -2,6 +2,7 @@ package com.fimeproject.fimebe.dao;
 
 import com.fimeproject.fimebe.entity.Timeblock;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +19,28 @@ public class TimeblockDAOImpl implements TimeblockDAO{
         this.entityManager = entityManager;
     }
     @Override
-    @Transactional
-    public void save(Timeblock timeblock) {
-        entityManager.persist(timeblock);
+    public Timeblock save(Timeblock timeblock) {
+
+        Timeblock dbTimeblock = entityManager.merge(timeblock);
+
+        return dbTimeblock;
     }
 
     @Override
-    public Timeblock findById(Integer id) {
-        return entityManager.find(Timeblock.class, id);
+    public void deleteById(int theId) {
+        Timeblock theTimeblock = entityManager.find(Timeblock.class, theId);
+
+        entityManager.remove(theTimeblock);
+    }
+
+
+    @Override
+    public List<Timeblock> findByName(String name) {
+
+        Query query = entityManager.createQuery("select tb FROM Timeblock tb " + "where tb.name=:name").setParameter("name", name);
+
+        return query.getResultList();
+
     }
 
     @Override
