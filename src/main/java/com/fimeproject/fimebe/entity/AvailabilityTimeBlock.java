@@ -2,46 +2,54 @@ package com.fimeproject.fimebe.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="availability_timeblocks")
-public class AvailabilityTimeBlocks {
+public class AvailabilityTimeBlock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
     private int id;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private Timestamp startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private Timestamp endDate;
 
     @Column(name = "availability_id")
     private int availabilityId;
 
-    public AvailabilityTimeBlocks() {}
+    public AvailabilityTimeBlock() {}
 
-    public AvailabilityTimeBlocks(Date startDate, Date endDate, int availabilityId) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public AvailabilityTimeBlock(Timestamp startDate, Timestamp endDate, int availabilityId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.availabilityId = availabilityId;
     }
 
-    public Date getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Timestamp getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
 
