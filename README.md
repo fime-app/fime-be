@@ -102,7 +102,7 @@ taskkill /PID [pid] /F
 
 ### Request
 
-`POST /api/events`
+`POST /api/create-events`
 
 ### Payload 
 ```json
