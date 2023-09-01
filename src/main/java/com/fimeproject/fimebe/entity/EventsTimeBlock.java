@@ -2,7 +2,7 @@ package com.fimeproject.fimebe.entity;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="events_timeblocks")
@@ -13,35 +13,35 @@ public class EventsTimeBlock {
     private int id;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private Timestamp startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private Timestamp endDate;
 
     @Column(name = "event_id")
     private int eventId;
 
     public EventsTimeBlock() {}
 
-    public EventsTimeBlock(Date startDate, Date endDate, int eventId) {
+    public EventsTimeBlock(Timestamp startDate, Timestamp endDate, int eventId) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.eventId = eventId;
     }
 
-    public Date getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public Timestamp getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(Timestamp endDate) {
         this.endDate = endDate;
     }
 

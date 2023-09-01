@@ -49,18 +49,12 @@ public class EventsRestController {
         return eventDTOList;
     }
 
-    @GetMapping("/event/{id}")
-    public List<Events> findAllAvailableDatesGivenEvent(@PathVariable int id) {
-        return eventsService.findAllAvailableDatesGivenEvent(id);
-    }
-
-//    @PostMapping("/event")
-//    public ResponseEntity<Events> createEvent(@RequestBody Events event) {
-//        Events createdEvent = eventsService.createEvent(event);
-//        return new ResponseEntity<>(createdEvent, HttpStatus.CREATED);
+//    @GetMapping("/event/{id}")
+//    public List<Events> findAllAvailableDatesGivenEvent(@PathVariable int id) {
+//        return eventsService.findAllAvailableDatesGivenEvent(id);
 //    }
 
-    @PostMapping("/event-test")
+    @PostMapping("/create-events")
     public ResponseEntity<Map<Events, List<EventsTimeBlock>>> createEvent(@RequestBody List<EventAndTimeBlockDTO> eventAndTimeBlockDTOArr) {
         Map<Events, List<EventsTimeBlock>> response = new HashMap<>();
         for (EventAndTimeBlockDTO etb : eventAndTimeBlockDTOArr) {
