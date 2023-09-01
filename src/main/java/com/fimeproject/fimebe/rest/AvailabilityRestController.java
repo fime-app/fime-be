@@ -1,5 +1,7 @@
 package com.fimeproject.fimebe.rest;
 
+import com.fimeproject.fimebe.dto.AvailabilityTimeBlockDTO;
+import com.fimeproject.fimebe.dto.DateRangeDTO;
 import com.fimeproject.fimebe.dto.EventAvailabilityDTO;
 import com.fimeproject.fimebe.entity.Availability;
 import com.fimeproject.fimebe.entity.AvailabilityTimeBlock;
@@ -7,7 +9,10 @@ import com.fimeproject.fimebe.service.AvailabilityService;
 import com.fimeproject.fimebe.service.AvailabilityTimeBlockService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
@@ -22,16 +27,85 @@ public class AvailabilityRestController {
         this.availabilityTimeblockService = availabilityTimeblockService;
     }
 
-    @GetMapping("/event/{id}")
-    public List<EventAvailabilityDTO> getAllById(@PathVariable int id) {
-        List<Availability> availability = availabilityService.findByEventId(id);
-        for (Availability a : availability) {
-            List<AvailabilityTimeBlock> availabilityTimeBlockList = availabilityTimeblockService.findTimeBlockByAvailabilityId(a.getId());
-            System.out.println(a);
-            for (AvailabilityTimeBlock atb : availabilityTimeBlockList){
-                System.out.println(atb);
+
+    public List<DateRangeDTO> calculateCommonFreeTimeRanges(List<AvailabilityTimeBlockDTO> availabilityList) {
+        // Get the time blocks for the first participant
+        List<DateRangeDTO> commonDateRanges = new ArrayList<>(availabilityList.get(0).getAvailableDates());
+
+        // Iterate over the remaining participants
+        for (int i = 1; i < availabilityList.size(); i++) {
+            List<DateRangeDTO> participantTimeBlocks = availabilityList.get(i).getAvailableDates();
+            List<DateRangeDTO> overlappingRanges = new ArrayList<>();
+
+            // Compare each time block of the current participant with the commonDateRanges
+            for (DateRangeDTO commonRange : commonDateRanges) {
+                for (DateRangeDTO participantRange : participantTimeBlocks) {
+                    LocalDateTime commonStart = commonRange.getStartDate().toLocalDateTime();
+                    LocalDateTime commonEnd = commonRange.getEndDate().toLocalDateTime();
+                    LocalDateTime participantStart = participantRange.getStartDate().toLocalDateTime();
+                    LocalDateTime participantEnd = participantRange.getEndDate().toLocalDateTime();
+
+                    // Check if the time slots overlap
+                    if (commonStart.isBefore(participantEnd) && commonEnd.isAfter(participantStart)) {
+                        LocalDateTime overlapStart = commonStart.isAfter(participantStart) ? commonStart : participantStart;
+                        LocalDateTime overlapEnd = commonEnd.isBefore(participantEnd) ? commonEnd : participantEnd;
+
+                        // Add overlapping range to overlappingRanges if it doesn't already exist
+                        DateRangeDTO overlappingRange = new DateRangeDTO(Timestamp.valueOf(overlapStart), Timestamp.valueOf(overlapEnd));
+                        if (!overlappingRanges.contains(overlappingRange)) {
+                            overlappingRanges.add(overlappingRange);
+                        }
+                    }
+                }
+            }
+
+            // Update the commonDateRanges with the overlappingRanges
+            commonDateRanges = overlappingRanges;
+        }
+
+        return commonDateRanges;
+    }
+
+    public static List<DateRangeDTO> removeDuplicateDateRanges(List<DateRangeDTO> dateRanges) {
+        Set<String> uniqueDateRanges = new HashSet<>();
+        for (DateRangeDTO dateRange : dateRanges) {
+            // Check if the set already contains a DateRangeDTO with the same start and end dates
+            String s = dateRange.getStartDate().toString() + "\n" + dateRange.getEndDate().toString();
+            if (!uniqueDateRanges.contains(dateRange)) {
+                uniqueDateRanges.add(s);
             }
         }
-        return null;
+
+        List<DateRangeDTO> noDups = new ArrayList<>();
+
+        for (String s : uniqueDateRanges) {
+            Timestamp start = Timestamp.valueOf(s.split("\n")[0]);
+            Timestamp end = Timestamp.valueOf(s.split("\n")[1]);
+            DateRangeDTO drt = new DateRangeDTO(start, end);
+            noDups.add(drt);
+        }
+        return noDups;
+    }
+
+
+    @GetMapping("/event/{id}")
+    public EventAvailabilityDTO getAllById(@PathVariable int id) {
+        List<AvailabilityTimeBlockDTO> availabilityTimeBlockDTOList = new ArrayList<>();
+        List<Availability> availability = availabilityService.findByEventId(id);
+        List<DateRangeDTO> allDateRanges = new ArrayList<>();
+        for (Availability a : availability) {
+            List<DateRangeDTO> dateRanges = new ArrayList<>();
+            List<AvailabilityTimeBlock> availabilityTimeBlockList = availabilityTimeblockService.findTimeBlockByAvailabilityId(a.getId());
+            for (AvailabilityTimeBlock atb : availabilityTimeBlockList){
+                dateRanges.add(new DateRangeDTO(atb.getStartDate(), atb.getEndDate()));
+                allDateRanges.add(new DateRangeDTO(atb.getStartDate(), atb.getEndDate()));
+            }
+            availabilityTimeBlockDTOList.add(new AvailabilityTimeBlockDTO(a.getName(), dateRanges));
+        }
+
+        List<DateRangeDTO> availabilityRanges = calculateCommonFreeTimeRanges(availabilityTimeBlockDTOList);
+        List<DateRangeDTO> noDupAvailabilityRanges = removeDuplicateDateRanges(availabilityRanges);
+        EventAvailabilityDTO result = new EventAvailabilityDTO(availabilityTimeBlockDTOList, noDupAvailabilityRanges);
+        return result;
     }
 }
