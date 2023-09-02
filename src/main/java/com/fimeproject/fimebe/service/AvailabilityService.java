@@ -6,4 +6,7 @@ import java.util.List;
 
 public interface AvailabilityService {
     List<Availability> findByEventId(int id);
+
+    Availability createAvailability(Availability availability);
+
 }

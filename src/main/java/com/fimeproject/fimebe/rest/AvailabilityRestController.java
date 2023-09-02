@@ -1,15 +1,14 @@
 package com.fimeproject.fimebe.rest;
 
-import com.fimeproject.fimebe.dto.AvailabilityTimeBlockDTO;
-import com.fimeproject.fimebe.dto.DateRangeDTO;
-import com.fimeproject.fimebe.dto.EventAvailabilityDTO;
+import com.fimeproject.fimebe.dto.*;
 import com.fimeproject.fimebe.entity.Availability;
 import com.fimeproject.fimebe.entity.AvailabilityTimeBlock;
 import com.fimeproject.fimebe.service.AvailabilityService;
 import com.fimeproject.fimebe.service.AvailabilityTimeBlockService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -100,12 +99,26 @@ public class AvailabilityRestController {
                 dateRanges.add(new DateRangeDTO(atb.getStartDate(), atb.getEndDate()));
                 allDateRanges.add(new DateRangeDTO(atb.getStartDate(), atb.getEndDate()));
             }
-            availabilityTimeBlockDTOList.add(new AvailabilityTimeBlockDTO(a.getName(), dateRanges));
+            availabilityTimeBlockDTOList.add(new AvailabilityTimeBlockDTO(a.getUsername(), dateRanges));
         }
 
         List<DateRangeDTO> availabilityRanges = calculateCommonFreeTimeRanges(availabilityTimeBlockDTOList);
         List<DateRangeDTO> noDupAvailabilityRanges = removeDuplicateDateRanges(availabilityRanges);
         EventAvailabilityDTO result = new EventAvailabilityDTO(availabilityTimeBlockDTOList, noDupAvailabilityRanges);
         return result;
+    }
+
+    @PostMapping("/create-availability/{id}")
+    public ResponseEntity<UserAvailabilityDTO> createAvailability(@RequestBody UserAvailabilityDTO userAvailabilityDTO, @PathVariable int id) {
+        Availability createdAvailability = availabilityService.createAvailability(new Availability(userAvailabilityDTO.getUsername(), id));
+
+        List<AvailabilityTimeBlock> dateRanges = new ArrayList<>();
+
+        for (AvailabilityTimeBlock dr : userAvailabilityDTO.getAvailableDateRanges()) {
+            AvailabilityTimeBlock createdAvailabilityTimeBlock = availabilityTimeblockService.createAvailabilityTimeBlock(new AvailabilityTimeBlock(dr.getStartDate(), dr.getEndDate(), createdAvailability.getId()));
+            dateRanges.add(createdAvailabilityTimeBlock);
+        }
+
+        return new ResponseEntity<>(new UserAvailabilityDTO(userAvailabilityDTO.getUsername(), dateRanges), HttpStatus.CREATED);
     }
 }

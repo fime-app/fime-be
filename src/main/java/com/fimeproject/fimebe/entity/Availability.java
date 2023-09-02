@@ -10,21 +10,21 @@ public class Availability  {
     @Column(name="id")
     private int id;
 
-    @Column(name="name")
-    private String name;
+    @Column(name="username")
+    private String username;
 
     @Column(name="event_id")
     private int eventId;
 
     public Availability() {}
 
-    public Availability(String name, int eventId) {
-        this.name = name;
+    public Availability(String username, int eventId) {
+        this.username = username;
         this.eventId = eventId;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public int getId() {
@@ -35,8 +35,8 @@ public class Availability  {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public int getEventId() {
@@ -51,7 +51,7 @@ public class Availability  {
     public String toString() {
         return "Availability{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + username + '\'' +
                 ", eventId=" + eventId +
                 '}';
     }

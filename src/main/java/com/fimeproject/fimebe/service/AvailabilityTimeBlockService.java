@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AvailabilityTimeBlockService {
     List<AvailabilityTimeBlock> findTimeBlockByAvailabilityId(int availabilityId);
+
+    AvailabilityTimeBlock createAvailabilityTimeBlock(AvailabilityTimeBlock availabilityTimeBlock);
 }

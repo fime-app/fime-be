@@ -3,12 +3,24 @@ package com.fimeproject.fimebe.dto;
 import java.util.List;
 
 public class EventAndTimeBlockDTO {
+
+    private int id;
     private String name;
 
     private String description;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private List<DateRangeDTO> dateRanges;
 
-    public EventAndTimeBlockDTO(String name, String description, List<DateRangeDTO> dateRanges) {
+    public EventAndTimeBlockDTO(int id, String name, String description, List<DateRangeDTO> dateRanges) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.dateRanges = dateRanges;
