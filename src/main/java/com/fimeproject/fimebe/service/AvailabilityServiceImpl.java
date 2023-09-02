@@ -15,4 +15,9 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     public List<Availability> findByEventId(int eventId) {
         return availabilityDAO.findByEventId(eventId);
     }
+
+    @Override
+    public Availability createAvailability(Availability availability) {
+        return availabilityDAO.save(availability);
+    }
 }

@@ -41,18 +41,13 @@ public class EventsRestController {
                 dateRanges.add(dateRangeDTO);
             }
 
-            EventAndTimeBlockDTO eventAndTimeBlockDTO = new EventAndTimeBlockDTO(e.getName(), e.getDescription(), dateRanges);
+            EventAndTimeBlockDTO eventAndTimeBlockDTO = new EventAndTimeBlockDTO(e.getId(), e.getName(), e.getDescription(), dateRanges);
 
             eventDTOList.add(eventAndTimeBlockDTO);
         }
 
         return eventDTOList;
     }
-
-//    @GetMapping("/event/{id}")
-//    public List<Events> findAllAvailableDatesGivenEvent(@PathVariable int id) {
-//        return eventsService.findAllAvailableDatesGivenEvent(id);
-//    }
 
     @PostMapping("/create-events")
     public ResponseEntity<Map<Events, List<EventsTimeBlock>>> createEvent(@RequestBody List<EventAndTimeBlockDTO> eventAndTimeBlockDTOArr) {

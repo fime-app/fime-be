@@ -1,4 +1,5 @@
 ## MySQL DB Setup Scripts
+### Fime Project Admin Setup
 ```roomsql
 -- Drop user first if they exist
 DROP USER if exists 'fimeproject'@'localhost' ;
@@ -9,13 +10,16 @@ CREATE USER 'fimeproject'@'localhost' IDENTIFIED BY 'fimeproject';
 GRANT ALL PRIVILEGES ON * . * TO 'fimeproject'@'localhost';
 ```
 
+### Table Schema
 ```roomsql
 CREATE DATABASE  IF NOT EXISTS `fime`;
 USE `fime`;
 
---
--- Table structure for table `student`
---
+CREATE TABLE `users` (
+	`id` int NOT NULL AUTO_INCREMENT,
+    `username` varchar(45) UNIQUE NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1; 
 
 CREATE TABLE `events` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -35,9 +39,10 @@ CREATE TABLE `events_timeblocks` (
 
 CREATE TABLE `availability` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
+  `username` varchar(45) NOT NULL,
   `event_id` int NOT NULL,
   PRIMARY KEY (`id`),
+  FOREIGN KEY (`username`) REFERENCES users(username), 
   FOREIGN KEY (`event_id`) REFERENCES events(id) 
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -49,6 +54,36 @@ CREATE TABLE `availability_timeblocks` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`availability_id`) REFERENCES availability(id) 
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+```
+
+### Sample records for testing
+```roomsql
+-- Insert records into users table
+INSERT INTO users (username) VALUES ('Chika'), ('Nathan'), ('Wilson');
+
+-- Insert records into events table
+INSERT INTO events (name, description) VALUES
+('Gym', "We go Gym"),
+('Food', "We go food");
+
+-- Insert records into events_timeblocks table
+INSERT INTO events_timeblocks (start_date, end_date, event_id) VALUES
+('2023-09-02 09:00:00', '2023-09-02 18:00:00', 1),
+('2023-09-02 10:00:00', '2023-09-02 18:00:00', 2);
+
+-- Insert records into availability table
+INSERT INTO availability (username, event_id) VALUES
+('Wilson', 1),
+('Chika', 1),
+('Nathan', 1);
+
+-- Insert records into availability_timeblocks table
+INSERT INTO availability_timeblocks (start_date, end_date, availability_id) VALUES
+('2023-09-02 09:00:00', '2023-09-02 10:00:00', 1),
+('2023-09-02 16:00:00', '2023-09-02 18:00:00', 1),
+('2023-09-02 16:00:00', '2023-09-02 16:30:00', 2),
+('2023-09-02 10:00:00', '2023-09-02 13:00:00', 2),
+('2023-09-02 16:00:00', '2023-09-02 16:30:00', 3); 
 ```
 
 ### Fuck Tomcat
@@ -68,34 +103,28 @@ taskkill /PID [pid] /F
 
 ```json
 [
-    {
-        "name": "Gym",
-        "description": "We go gym",
-        "dateRanges": [
-            {
-                "startDate": "2023-01-01",
-                "endDate": "2023-01-02"
-            },
-            {
-                "startDate": "2023-01-03",
-                "endDate": "2023-01-04"
-            },
-            {
-                "startDate": "2023-01-05",
-                "endDate": "2023-01-07"
-            }
-        ]
-    },
-    {
-        "name": "Karaoke",
-        "description": "We go sing",
-        "dateRanges": [
-            {
-                "startDate": "2023-01-01",
-                "endDate": "2023-01-03"
-            }
-        ]
-    }
+  {
+    "id": 1,
+    "name": "Gym",
+    "description": "We go Gym",
+    "dateRanges": [
+      {
+        "startDate": "2023-09-02T01:00:00.000+00:00",
+        "endDate": "2023-09-02T10:00:00.000+00:00"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Food",
+    "description": "We go food",
+    "dateRanges": [
+      {
+        "startDate": "2023-09-02T02:00:00.000+00:00",
+        "endDate": "2023-09-02T10:00:00.000+00:00"
+      }
+    ]
+  }
 ]
 ```
 ## Post Events
@@ -142,23 +171,30 @@ taskkill /PID [pid] /F
 
 ```json
 {
-    "Events{id=10, name='Gym', description='We go gym'}": [
-        {
-            "startDate": "2023-01-01",
-            "endDate": "2023-01-02",
-            "eventId": 10
-        },
-        {
-            "startDate": "2023-01-03",
-            "endDate": "2023-01-04",
-            "eventId": 10
-        },
-        {
-            "startDate": "2023-01-05",
-            "endDate": "2023-01-07",
-            "eventId": 10
-        }
-    ]
+  "Events{id=5, name='Karaoke', description='We go sing'}": [
+    {
+      "startDate": "2023-01-01T00:00:00.000+00:00",
+      "endDate": "2023-01-03T00:00:00.000+00:00",
+      "eventId": 5
+    }
+  ],
+  "Events{id=4, name='Gym', description='We go gym'}": [
+    {
+      "startDate": "2023-01-01T00:00:00.000+00:00",
+      "endDate": "2023-01-02T00:00:00.000+00:00",
+      "eventId": 4
+    },
+    {
+      "startDate": "2023-01-03T00:00:00.000+00:00",
+      "endDate": "2023-01-04T00:00:00.000+00:00",
+      "eventId": 4
+    },
+    {
+      "startDate": "2023-01-05T00:00:00.000+00:00",
+      "endDate": "2023-01-07T00:00:00.000+00:00",
+      "eventId": 4
+    }
+  ]
 }
 ```
 
@@ -172,70 +208,79 @@ taskkill /PID [pid] /F
 {
   "users": [
     {
-      "name": "John Smith",
+      "name": "Wilson",
       "availableDates": [
         {
-          "startDate": "2023-09-01T05:00:00.000+00:00",
-          "endDate": "2023-09-01T07:00:00.000+00:00"
+          "startDate": "2023-09-02T01:00:00.000+00:00",
+          "endDate": "2023-09-02T02:00:00.000+00:00"
         },
         {
-          "startDate": "2023-09-01T10:00:00.000+00:00",
-          "endDate": "2023-09-01T11:00:00.000+00:00"
-        },
-        {
-          "startDate": "2023-09-03T06:30:00.000+00:00",
-          "endDate": "2023-09-03T07:00:00.000+00:00"
+          "startDate": "2023-09-02T08:00:00.000+00:00",
+          "endDate": "2023-09-02T10:00:00.000+00:00"
         }
       ]
     },
     {
-      "name": "Michael Davis",
+      "name": "Chika",
       "availableDates": [
         {
-          "startDate": "2023-09-01T03:00:00.000+00:00",
-          "endDate": "2023-09-01T07:00:00.000+00:00"
+          "startDate": "2023-09-02T08:00:00.000+00:00",
+          "endDate": "2023-09-02T08:30:00.000+00:00"
         },
         {
-          "startDate": "2023-09-01T08:00:00.000+00:00",
-          "endDate": "2023-09-01T09:00:00.000+00:00"
-        },
-        {
-          "startDate": "2023-09-03T06:30:00.000+00:00",
-          "endDate": "2023-09-03T07:00:00.000+00:00"
+          "startDate": "2023-09-02T02:00:00.000+00:00",
+          "endDate": "2023-09-02T05:00:00.000+00:00"
         }
       ]
     },
     {
-      "name": "John Johnson",
+      "name": "Nathan",
       "availableDates": [
         {
-          "startDate": "2023-09-01T06:30:00.000+00:00",
-          "endDate": "2023-09-01T07:00:00.000+00:00"
-        },
-        {
-          "startDate": "2023-09-03T06:30:00.000+00:00",
-          "endDate": "2023-09-03T07:00:00.000+00:00"
-        },
-        {
-          "startDate": "2023-09-03T06:30:00.000+00:00",
-          "endDate": "2023-09-03T07:00:00.000+00:00"
-        },
-        {
-          "startDate": "2023-09-03T06:30:00.000+00:00",
-          "endDate": "2023-09-03T07:00:00.000+00:00"
+          "startDate": "2023-09-02T08:00:00.000+00:00",
+          "endDate": "2023-09-02T08:30:00.000+00:00"
         }
       ]
     }
   ],
   "totalAvailability": [
     {
-      "startDate": "2023-09-03T06:30:00.000+00:00",
-      "endDate": "2023-09-03T07:00:00.000+00:00"
-    },
-    {
-      "startDate": "2023-09-01T06:30:00.000+00:00",
-      "endDate": "2023-09-01T07:00:00.000+00:00"
+      "startDate": "2023-09-02T08:00:00.000+00:00",
+      "endDate": "2023-09-02T08:30:00.000+00:00"
     }
   ]
+}
+```
+
+## Post Event Joiner Availability
+
+### Request
+`GET /api/event/{id}`
+
+### Payload
+```roomsql
+{
+    "username": "Nathan",
+    "availableDateRanges": [
+        {
+            "startDate": "2023-01-01",
+            "endDate": "2023-01-03"
+        }
+    ]
+}
+```
+
+### Response
+```roomsql
+{
+    "username": "Nathan",
+    "availableDateRanges": [
+        {
+            "id": 6,
+            "startDate": "2023-01-01T00:00:00.000+00:00",
+            "endDate": "2023-01-03T00:00:00.000+00:00",
+            "availabilityId": 4
+        }
+    ]
 }
 ```

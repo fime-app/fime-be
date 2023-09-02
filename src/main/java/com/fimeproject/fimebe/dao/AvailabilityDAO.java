@@ -7,4 +7,5 @@ import java.util.List;
 public interface AvailabilityDAO {
     List<Availability> findByEventId(int eventId);
 
+    Availability save(Availability availability);
 }

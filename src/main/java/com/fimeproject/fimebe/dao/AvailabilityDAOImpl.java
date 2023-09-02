@@ -3,6 +3,7 @@ package com.fimeproject.fimebe.dao;
 import com.fimeproject.fimebe.entity.Availability;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +20,12 @@ public class AvailabilityDAOImpl implements AvailabilityDAO {
         Query query = entityManager.createQuery("select e FROM Availability e " + "WHERE eventId=:eventId").setParameter("eventId", eventId);
         return query.getResultList();
     }
+
+    @Override
+    @Transactional
+    public Availability save(Availability availability) {
+        return entityManager.merge(availability);
+    }
+
+
 }
